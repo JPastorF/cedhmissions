@@ -21,17 +21,6 @@ class _GameScreenState extends State<GameScreen> {
   final TextEditingController _playerNameController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final gameProvider = Provider.of<GameProvider>(context, listen: false);
-      if (gameProvider.currentGame == null) {
-        gameProvider.newGame();
-      }
-    });
-  }
-
-  @override
   void dispose() {
     _playerNameController.dispose();
     super.dispose();
@@ -80,7 +69,7 @@ class _GameScreenState extends State<GameScreen> {
                         if (_playerNameController.text.isNotEmpty) {
                           gameProvider.addPlayer(_playerNameController.text);
                           _playerNameController.clear();
-                          Navigator.of(context).pop();
+                          // Dejamos el diálogo abierto para que puedan añadir más
                         }
                       },
                       child: const Text('Añadir Nuevo Jugador'),
@@ -229,7 +218,15 @@ class _GameScreenState extends State<GameScreen> {
         final game = gameProvider.currentGame;
         final players = game?.players ?? [];
         final rounds = game?.rounds ?? [];
-        players.sort((a, b) => b.totalPoints.compareTo(a.totalPoints));
+        // No es necesario ordenar los jugadores aquí si ya se hace en PlayerScoreCard
+        // players.sort((a, b) => b.totalPoints.compareTo(a.totalPoints));
+
+        // Muestra un indicador de carga mientras se carga la partida
+        if (game == null) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
         return Scaffold(
           appBar: AppBar(
@@ -253,7 +250,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ],
           ),
-          body: game == null || players.isEmpty
+          body: players.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
