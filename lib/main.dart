@@ -1,18 +1,13 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Importa la librería provider
-import 'providers/game_provider.dart'; // Importa tu GameProvider
-import 'screens/home_screen.dart'; // Importa tu HomeScreen
+import 'package:provider/provider.dart';
+import 'providers/game_provider.dart';
+import 'providers/favorite_players_provider.dart';
+import 'providers/mission_plan_provider.dart'; // Importa el nuevo provider
+import 'screens/home_screen.dart';
 
 void main() {
-  runApp(
-    // Envolvemos toda la aplicación con ChangeNotifierProvider
-    // Esto hace que GameProvider esté disponible para cualquier widget hijo
-    ChangeNotifierProvider(
-      create: (context) =>
-          GameProvider(), // Creamos una instancia de GameProvider
-      child: const MyApp(), // Nuestra aplicación principal
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,21 +15,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Missions Tracker ',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey, // Un tema de color agradable
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.blueGrey,
-          foregroundColor: Colors.white,
+    return MultiProvider(
+      providers: [
+        // Se registran todos los providers que se necesitan en la aplicación
+        ChangeNotifierProvider(create: (_) => GameProvider()),
+        ChangeNotifierProvider(create: (_) => FavoritePlayersProvider()),
+        ChangeNotifierProvider(
+          create: (_) => MissionPlanProvider(),
+        ), // Añade el nuevo provider aquí
+      ],
+      child: MaterialApp(
+        title: 'Misionero App',
+        theme: ThemeData(
+          primarySwatch: Colors.deepPurple,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Colors.blueAccent,
-          foregroundColor: Colors.white,
-        ),
+        home: const HomeScreen(), // La nueva pantalla de inicio
       ),
-      home: const HomeScreen(), // La pantalla inicial de nuestra aplicación
     );
   }
 }

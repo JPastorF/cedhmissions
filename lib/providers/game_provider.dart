@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart'; // Para generar IDs únicos
 import '../models/player.dart';
 import '../models/mission.dart';
+import '../models/mission_plan.dart'; // Importa el modelo de plan de misiones
 import '../models/round.dart';
 import '../models/game.dart';
-import '../data/mission_plans.dart'; // Importa los planes de misiones
+// Ya no es necesario importar los datos de planes fijos aquí
 
 class GameProvider with ChangeNotifier {
   Game? _currentGame; // La única partida activa
@@ -65,16 +66,14 @@ class GameProvider with ChangeNotifier {
 
   // --- Gestión de Rondas ---
 
-  void addRound() {
+  // Método actualizado: Ahora acepta un MissionPlan
+  void addRound(MissionPlan missionPlan) {
     if (_currentGame == null) {
       newGame(); // Si no hay partida, crea una nueva
     }
     final int newRoundNumber = _currentGame!.rounds.length + 1;
-    // Por ahora, usamos un plan de misiones fijo para cada nueva ronda
-    // Puedes alternar entre planes o tener una lógica más compleja aquí
-    final List<Mission> missionsForThisRound = List.from(
-      MissionPlans.basicMissionPlan,
-    ); // Copia el plan para no modificar el original
+    // Usar las misiones del plan proporcionado
+    final List<Mission> missionsForThisRound = List.from(missionPlan.missions);
 
     final newRound = Round(
       id: _uuid.v4(),
