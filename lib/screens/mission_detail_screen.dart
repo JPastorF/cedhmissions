@@ -1,3 +1,4 @@
+// lib/screens/mission_detail_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/mission_plan_provider.dart';
@@ -125,6 +126,47 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
     );
   }
 
+  void _showDeleteConfirmationDialog(Mission mission) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final provider = Provider.of<MissionPlanProvider>(
+          context,
+          listen: false,
+        );
+        return AlertDialog(
+          title: const Text('Eliminar Misión'),
+          content: Text(
+            '¿Estás seguro de que quieres eliminar la misión "${mission.name}"? Esta acción no se puede deshacer.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                provider.removeMissionFromPlan(
+                  widget.missionPlanId,
+                  mission.id,
+                );
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Misión "${mission.name}" eliminada')),
+                );
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text(
+                'Eliminar',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MissionPlanProvider>(
@@ -143,53 +185,58 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
               ),
             ],
           ),
-          body: ReorderableListView.builder(
-            onReorder: (oldIndex, newIndex) {
-              provider.reorderMissionsInPlan(
-                widget.missionPlanId,
-                oldIndex,
-                newIndex,
-              );
-            },
-            itemCount: plan.missions.length,
-            itemBuilder: (context, index) {
-              final mission = plan.missions[index];
-              return Dismissible(
-                key: Key(mission.id),
-                direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  provider.removeMissionFromPlan(
-                    widget.missionPlanId,
-                    mission.id,
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Misión "${mission.name}" eliminada'),
-                    ),
-                  );
-                },
-                background: Container(
-                  color: Colors.red,
-                  alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: const Icon(Icons.delete, color: Colors.white),
+          body: plan.missions.isEmpty
+              ? const Center(child: Text('Añade misiones a este plan'))
+              : ReorderableListView.builder(
+                  onReorder: (oldIndex, newIndex) {
+                    provider.reorderMissionsInPlan(
+                      widget.missionPlanId,
+                      oldIndex,
+                      newIndex,
+                    );
+                  },
+                  itemCount: plan.missions.length,
+                  itemBuilder: (context, index) {
+                    final mission = plan.missions[index];
+                    return Card(
+                      key: Key(mission.id),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.fromLTRB(
+                          16,
+                          0,
+                          8,
+                          0,
+                        ), // Ajuste de padding a la derecha
+                        title: Text(mission.name),
+                        subtitle: Text(
+                          '${mission.points} puntos - Tipo: ${mission.type == MissionType.multiple ? 'Múltiple' : 'Única'}\n${mission.description != null && mission.description!.isNotEmpty ? 'Descripción: ${mission.description}' : ''}',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              visualDensity:
+                                  VisualDensity.compact, // Ícono más compacto
+                              onPressed: () =>
+                                  _showAddEditMissionDialog(mission: mission),
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ), // Espacio reducido entre iconos
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              visualDensity:
+                                  VisualDensity.compact, // Ícono más compacto
+                              onPressed: () =>
+                                  _showDeleteConfirmationDialog(mission),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                child: Card(
-                  child: ListTile(
-                    title: Text(mission.name),
-                    subtitle: Text(
-                      '${mission.points} puntos - Tipo: ${mission.type == MissionType.multiple ? 'Múltiple' : 'Única'}\n${mission.description != null && mission.description!.isNotEmpty ? 'Descripción: ${mission.description}' : ''}',
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () =>
-                          _showAddEditMissionDialog(mission: mission),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
         );
       },
     );
