@@ -131,12 +131,13 @@ class _RoundDetailScreenState extends State<RoundDetailScreen> {
                             IconData typeIcon;
                             Color iconColor;
                             if (mission.type == MissionType.unique) {
-                              typeIcon = Icons.star; // Icono para misión única
-                              iconColor = Colors.amber.shade700;
+                              typeIcon =
+                                  Icons.person; // Icono para misión única
+                              iconColor = Colors.white;
                             } else {
                               typeIcon =
                                   Icons.group; // Icono para misión múltiple
-                              iconColor = Colors.blue.shade700;
+                              iconColor = Colors.white;
                             }
 
                             return Card(
@@ -167,7 +168,7 @@ class _RoundDetailScreenState extends State<RoundDetailScreen> {
                                             style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.deepPurple,
+                                              color: Colors.white,
                                             ),
                                             overflow: TextOverflow
                                                 .ellipsis, // Para manejar nombres largos
@@ -196,7 +197,7 @@ class _RoundDetailScreenState extends State<RoundDetailScreen> {
                                           mission.description!,
                                           style: const TextStyle(
                                             fontSize: 14,
-                                            color: Colors.black87,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),
@@ -226,7 +227,7 @@ class _RoundDetailScreenState extends State<RoundDetailScreen> {
                                           labelStyle: TextStyle(
                                             color: isCompleted
                                                 ? Colors.blue.shade900
-                                                : Colors.black87,
+                                                : Colors.white,
                                             fontWeight: isCompleted
                                                 ? FontWeight.bold
                                                 : FontWeight.normal,
