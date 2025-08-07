@@ -6,23 +6,43 @@ import '../models/mission.dart';
 import '../models/mission_plan.dart'; // Importa el modelo de plan de misiones
 import '../models/round.dart';
 import '../models/game.dart';
-// Ya no es necesario importar los datos de planes fijos aquí
+import '../services/storage_service.dart'; // Importa el servicio de almacenamiento
 
 class GameProvider with ChangeNotifier {
   Game? _currentGame; // La única partida activa
   final Uuid _uuid = Uuid(); // Generador de IDs únicos
+  final StorageService _storageService =
+      StorageService(); // Instancia del servicio de almacenamiento
 
   Game? get currentGame => _currentGame;
+
+  // Constructor que carga la partida al iniciar el provider
+  GameProvider() {
+    _loadGame();
+  }
+
+  /// Carga la partida guardada desde el almacenamiento local.
+  Future<void> _loadGame() async {
+    _currentGame = await _storageService.loadGameState();
+    notifyListeners();
+  }
+
+  /// Guarda el estado de la partida actual en el almacenamiento local.
+  Future<void> _saveGame() async {
+    await _storageService.saveGameState(_currentGame);
+  }
 
   // Inicializa una nueva partida o carga una existente (futuro)
   void newGame() {
     _currentGame = Game(id: _uuid.v4());
+    _saveGame();
     notifyListeners();
   }
 
   // Reinicia la partida actual
   void resetGame() {
     _currentGame = null;
+    _saveGame();
     notifyListeners();
   }
 
@@ -35,6 +55,7 @@ class GameProvider with ChangeNotifier {
     final newPlayer = Player(id: _uuid.v4(), name: name);
     _currentGame!.addPlayer(newPlayer);
     _recalculateAllPlayerTotalPoints(); // Recalcular totales al añadir jugador
+    _saveGame();
     notifyListeners();
   }
 
@@ -50,6 +71,7 @@ class GameProvider with ChangeNotifier {
       });
     }
     _recalculateAllPlayerTotalPoints(); // Recalcular totales al eliminar jugador
+    _saveGame();
     notifyListeners();
   }
 
@@ -60,6 +82,7 @@ class GameProvider with ChangeNotifier {
     );
     if (playerIndex != -1) {
       _currentGame!.players[playerIndex].name = newName;
+      _saveGame();
       notifyListeners();
     }
   }
@@ -86,7 +109,7 @@ class GameProvider with ChangeNotifier {
     for (var player in _currentGame!.players) {
       _currentGame!.playerPointsPerRound[newRound.id]![player.id] = 0;
     }
-
+    _saveGame();
     notifyListeners();
   }
 
@@ -97,6 +120,7 @@ class GameProvider with ChangeNotifier {
       roundId,
     ); // Eliminar los puntos de esa ronda
     _recalculateAllPlayerTotalPoints(); // Recalcular totales
+    _saveGame();
     notifyListeners();
   }
 
@@ -138,6 +162,7 @@ class GameProvider with ChangeNotifier {
 
     _recalculateRoundPoints(roundId); // Recalcular puntos para esta ronda
     _recalculateAllPlayerTotalPoints(); // Recalcular puntos totales de todos los jugadores
+    _saveGame();
     notifyListeners();
   }
 

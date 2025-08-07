@@ -1,6 +1,8 @@
+// lib/screens/favorite_players_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/favorite_players_provider.dart';
+import '../models/player.dart';
 
 class FavoritePlayersScreen extends StatelessWidget {
   const FavoritePlayersScreen({super.key});
@@ -51,6 +53,7 @@ class FavoritePlayersScreen extends StatelessWidget {
   void _showEditPlayerDialog(
     BuildContext context,
     FavoritePlayersProvider provider,
+    String playerId, // Ahora se usa el ID del jugador para la actualización
     String oldName,
   ) {
     final TextEditingController controller = TextEditingController(
@@ -74,7 +77,8 @@ class FavoritePlayersScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 if (controller.text.isNotEmpty) {
-                  provider.updateFavoritePlayerName(oldName, controller.text);
+                  // Se llama al método con el ID y el nuevo nombre
+                  provider.updateFavoritePlayerName(playerId, controller.text);
                   Navigator.of(context).pop();
                 }
               },
@@ -110,9 +114,10 @@ class FavoritePlayersScreen extends StatelessWidget {
               : ListView.builder(
                   itemCount: players.length,
                   itemBuilder: (context, index) {
-                    final playerName = players[index];
+                    final player =
+                        players[index]; // Se accede al objeto Player completo
                     return ListTile(
-                      title: Text(playerName),
+                      title: Text(player.name), // Se usa la propiedad 'name'
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -121,14 +126,16 @@ class FavoritePlayersScreen extends StatelessWidget {
                             onPressed: () => _showEditPlayerDialog(
                               context,
                               provider,
-                              playerName,
+                              player.id, // Se pasa el ID
+                              player.name, // Se pasa el nombre actual
                             ),
                             tooltip: 'Editar',
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () =>
-                                provider.removeFavoritePlayer(playerName),
+                            onPressed: () => provider.removeFavoritePlayer(
+                              player.id,
+                            ), // Se usa el ID para eliminar
                             tooltip: 'Eliminar',
                           ),
                         ],

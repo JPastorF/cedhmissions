@@ -94,9 +94,9 @@ class _GameScreenState extends State<GameScreen> {
                       const SizedBox(height: 10),
                       ...selectablePlayers.map((playerName) {
                         return ListTile(
-                          title: Text(playerName),
+                          title: Text(playerName.name),
                           onTap: () {
-                            gameProvider.addPlayer(playerName);
+                            gameProvider.addPlayer(playerName.name);
                             Navigator.of(context).pop();
                           },
                         );
