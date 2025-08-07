@@ -223,6 +223,7 @@ class _GameScreenState extends State<GameScreen> {
         final rounds = game?.rounds ?? [];
         // No es necesario ordenar los jugadores aquí si ya se hace en PlayerScoreCard
         // players.sort((a, b) => b.totalPoints.compareTo(a.totalPoints));
+        players.sort((a, b) => b.totalPoints.compareTo(a.totalPoints));
 
         // Muestra un indicador de carga mientras se carga la partida
         if (game == null) {

@@ -188,6 +188,7 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
           body: plan.missions.isEmpty
               ? const Center(child: Text('Añade misiones a este plan'))
               : ReorderableListView.builder(
+                  padding: const EdgeInsets.only(bottom: 56.0),
                   onReorder: (oldIndex, newIndex) {
                     provider.reorderMissionsInPlan(
                       widget.missionPlanId,
