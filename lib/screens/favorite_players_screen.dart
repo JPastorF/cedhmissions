@@ -94,7 +94,7 @@ class FavoritePlayersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Jugadores Favoritos'),
+        title: const Text('Jugadores'),
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add),

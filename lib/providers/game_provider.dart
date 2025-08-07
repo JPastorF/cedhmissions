@@ -41,7 +41,8 @@ class GameProvider with ChangeNotifier {
 
   // Reinicia la partida actual
   void resetGame() {
-    _currentGame = null;
+    //_currentGame = null;
+    _currentGame = Game(id: _uuid.v4());
     _saveGame();
     notifyListeners();
   }

@@ -133,11 +133,11 @@ class _RoundDetailScreenState extends State<RoundDetailScreen> {
                             if (mission.type == MissionType.unique) {
                               typeIcon =
                                   Icons.person; // Icono para misión única
-                              iconColor = Colors.white;
+                              iconColor = Colors.lightBlueAccent;
                             } else {
                               typeIcon =
                                   Icons.group; // Icono para misión múltiple
-                              iconColor = Colors.white;
+                              iconColor = Colors.lightBlueAccent;
                             }
 
                             return Card(
@@ -178,11 +178,11 @@ class _RoundDetailScreenState extends State<RoundDetailScreen> {
                                         Text(
                                           '${mission.points}',
                                           style: TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                             color: mission.points >= 0
-                                                ? Colors.green.shade700
-                                                : Colors.red.shade700,
+                                                ? Colors.greenAccent
+                                                : Colors.amberAccent,
                                           ),
                                         ),
                                       ],
@@ -197,7 +197,7 @@ class _RoundDetailScreenState extends State<RoundDetailScreen> {
                                           mission.description!,
                                           style: const TextStyle(
                                             fontSize: 14,
-                                            color: Colors.white,
+                                            //color: Colors.white,
                                           ),
                                         ),
                                       ),
@@ -224,13 +224,14 @@ class _RoundDetailScreenState extends State<RoundDetailScreen> {
                                           },
                                           selectedColor: Colors.blue.shade100,
                                           checkmarkColor: Colors.blue.shade700,
+                                          backgroundColor: Colors.white12,
                                           labelStyle: TextStyle(
                                             color: isCompleted
                                                 ? Colors.blue.shade900
                                                 : Colors.white,
                                             fontWeight: isCompleted
                                                 ? FontWeight.bold
-                                                : FontWeight.normal,
+                                                : FontWeight.bold,
                                           ),
                                         );
                                       }).toList(),

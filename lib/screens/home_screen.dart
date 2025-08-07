@@ -9,7 +9,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Score Tracker'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Game score tracker'),
+        centerTitle: true,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -44,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   textStyle: const TextStyle(fontSize: 18),
                 ),
-                child: const Text('Gestionar Jugadores Favoritos'),
+                child: const Text('Gestionar Jugadores'),
               ),
               const SizedBox(height: 20),
               // Nuevo botón para la gestión de planes de misiones

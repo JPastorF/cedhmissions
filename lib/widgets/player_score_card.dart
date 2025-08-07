@@ -112,7 +112,7 @@ class PlayerScoreCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+                      color: Colors.white,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -123,8 +123,8 @@ class PlayerScoreCard extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: player.totalPoints >= 0
-                        ? Colors.green.shade700
-                        : Colors.red.shade700,
+                        ? Colors.greenAccent
+                        : Colors.amberAccent,
                   ),
                 ),
                 PopupMenuButton<String>(
@@ -197,8 +197,8 @@ class PlayerScoreCard extends StatelessWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: pointsInRound >= 0
-                                ? Colors.blue
-                                : Colors.orange,
+                                ? Colors.greenAccent
+                                : Colors.amberAccent,
                           ),
                         ),
                       ],
@@ -209,7 +209,7 @@ class PlayerScoreCard extends StatelessWidget {
             ] else ...[
               const Text(
                 'No hay rondas aún.',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+                style: TextStyle(fontSize: 14), //color: Colors.black54),
               ),
             ],
           ],

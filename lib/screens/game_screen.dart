@@ -215,6 +215,9 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
+        if (gameProvider.currentGame == null) {
+          gameProvider.newGame();
+        }
         final game = gameProvider.currentGame;
         final players = game?.players ?? [];
         final rounds = game?.rounds ?? [];
@@ -230,11 +233,11 @@ class _GameScreenState extends State<GameScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Gestión de Partida'),
+            title: const Text('Partida'),
             actions: [
               IconButton(
                 icon: const Icon(Icons.person_add),
-                tooltip: 'Añadir Jugador o Importar de Favoritos',
+                tooltip: 'Añadir Jugador',
                 onPressed: () =>
                     _showAddPlayerAndFavoritesDialog(context, gameProvider),
               ),
@@ -257,7 +260,7 @@ class _GameScreenState extends State<GameScreen> {
                     children: [
                       const Text(
                         'Añade jugadores para comenzar una partida.',
-                        style: TextStyle(fontSize: 18, color: Colors.black54),
+                        style: TextStyle(fontSize: 18),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton.icon(
@@ -313,6 +316,7 @@ class _GameScreenState extends State<GameScreen> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -321,7 +325,7 @@ class _GameScreenState extends State<GameScreen> {
                                 'No hay rondas aún.',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.black54,
+                                  //color: Colors.black54,
                                 ),
                               )
                             else
@@ -365,6 +369,7 @@ class _GameScreenState extends State<GameScreen> {
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),

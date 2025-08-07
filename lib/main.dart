@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.blueGrey.shade900,
-        scaffoldBackgroundColor: Colors.black87,
+        scaffoldBackgroundColor: Colors.blueGrey.shade900,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.blueGrey,
           foregroundColor: Colors.white,
@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueAccent,
+            backgroundColor: Colors.lightBlue,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
