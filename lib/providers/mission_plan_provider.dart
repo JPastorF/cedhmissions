@@ -30,18 +30,20 @@ class MissionPlanProvider with ChangeNotifier {
     await _storageService.saveMissionPlans(_missionPlans);
   }
 
+  //importa un mission plan
+  void importMissionPlan(MissionPlan plan) {
+    //le creo nuevo id
+    plan.id = _uuid.v4();
+    _missionPlans.add(plan);
+    _saveData();
+    notifyListeners();
+  }
+
   /// Métodos de gestión de planes
   // Añade un nuevo plan de misión con el nombre dado.
   void addMissionPlan(String name) {
     if (name.trim().isEmpty) return;
     _missionPlans.add(MissionPlan(id: _uuid.v4(), name: name, missions: []));
-    _saveData();
-    notifyListeners();
-  }
-
-  //importa un mission plan
-  void importMissionPlan(MissionPlan plan) {
-    _missionPlans.add(plan);
     _saveData();
     notifyListeners();
   }
