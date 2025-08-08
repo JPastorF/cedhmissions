@@ -1,6 +1,7 @@
+// lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
-import 'game_screen.dart'; // Importa la pantalla de gestión de partida
-import 'favorite_players_screen.dart'; // Importa la pantalla de jugadores favoritos
+import 'game_screen.dart';
+import 'favorite_players_screen.dart';
 import 'mission_plans_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -8,64 +9,96 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Definimos un degradado para el fondo que se ajuste a tu tema oscuro.
+    const LinearGradient backgroundGradient = LinearGradient(
+      colors: [
+        Color(0xFF263238), // blueGrey.shade900
+        Color(0xFF37474F), // blueGrey.shade800
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Game score tracker'),
-        centerTitle: true,
+      appBar: AppBar(title: const Text('Puntos & Misiones'), centerTitle: true),
+      body: Container(
+        decoration: const BoxDecoration(gradient: backgroundGradient),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildExpandedOption(
+              context,
+              title: 'Iniciar o Continuar Partida',
+              icon: Icons.sports_esports,
+              color: Colors.blue.shade800, // Un azul profundo
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const GameScreen()),
+                );
+              },
+            ),
+            _buildExpandedOption(
+              context,
+              title: 'Gestionar Jugadores',
+              icon: Icons.person_add_alt_1,
+              color: Colors.deepOrange.shade900, // Un naranja oscuro
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const FavoritePlayersScreen(),
+                  ),
+                );
+              },
+            ),
+            _buildExpandedOption(
+              context,
+              title: 'Gestionar Planes de Misiones',
+              icon: Icons.assignment,
+              color: Colors.purple.shade800, // Un púrpura oscuro
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MissionPlansScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Botón para ir a la pantalla de la partida
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const GameScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  textStyle: const TextStyle(fontSize: 18),
+    );
+  }
+
+  Widget _buildExpandedOption(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: Material(
+        color: color,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 60, color: Colors.white),
+                const SizedBox(height: 10),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                child: const Text('Iniciar o Continuar Partida'),
-              ),
-              const SizedBox(height: 20),
-              // Botón para ir a la pantalla de jugadores favoritos
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const FavoritePlayersScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  textStyle: const TextStyle(fontSize: 18),
-                ),
-                child: const Text('Gestionar Jugadores'),
-              ),
-              const SizedBox(height: 20),
-              // Nuevo botón para la gestión de planes de misiones
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const MissionPlansScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  textStyle: const TextStyle(fontSize: 18),
-                ),
-                child: const Text('Gestionar Planes de Misiones'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
