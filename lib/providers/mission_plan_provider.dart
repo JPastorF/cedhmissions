@@ -39,6 +39,13 @@ class MissionPlanProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  //importa un mission plan
+  void importMissionPlan(MissionPlan plan) {
+    _missionPlans.add(plan);
+    _saveData();
+    notifyListeners();
+  }
+
   // Actualiza el nombre de un plan de misión existente.
   void updateMissionPlanName(String planId, String newName) {
     try {

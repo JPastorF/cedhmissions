@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/mission_plan_provider.dart';
 import '../models/mission.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'dart:typed_data';
+import 'dart:convert';
 
 class MissionDetailScreen extends StatefulWidget {
   final String missionPlanId;
@@ -25,6 +29,52 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
     _descriptionController.dispose();
     _pointsController.dispose();
     super.dispose();
+  }
+
+  // Nuevo método para exportar el plan de misiones
+  Future<void> _exportMissionPlan() async {
+    final provider = Provider.of<MissionPlanProvider>(context, listen: false);
+    final planToExport = provider.missionPlans.firstWhere(
+      (p) => p.id == widget.missionPlanId,
+    );
+
+    try {
+      // 1. Serializar el objeto MissionPlan a un String JSON
+      final jsonString = jsonEncode(planToExport.toJson());
+
+      // 2. Convertir el String JSON a bytes
+      final fileBytes = Uint8List.fromList(utf8.encode(jsonString));
+
+      // 3. Abrir el diálogo para que el usuario guarde el archivo
+      String? outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: 'Exportar Plan de Misiones',
+        fileName:
+            'plan_de_misiones_${planToExport.name.replaceAll(' ', '_')}.json',
+        bytes: fileBytes,
+      );
+
+      if (outputFile != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Plan "${planToExport.name}" exportado con éxito.'),
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Exportación cancelada.')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al exportar el plan: $e')),
+        );
+      }
+    }
   }
 
   void _showAddEditMissionDialog({Mission? mission}) {
@@ -182,6 +232,11 @@ class _MissionDetailScreenState extends State<MissionDetailScreen> {
                 icon: const Icon(Icons.add),
                 tooltip: 'Añadir nueva misión',
                 onPressed: () => _showAddEditMissionDialog(),
+              ),
+              IconButton(
+                icon: const Icon(Icons.upload_file),
+                tooltip: 'Exportar plan de misiones',
+                onPressed: _exportMissionPlan,
               ),
             ],
           ),

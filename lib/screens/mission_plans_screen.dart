@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/mission_plan_provider.dart';
 import 'mission_detail_screen.dart';
+import '../models/mission_plan.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'dart:typed_data';
+import 'dart:convert';
 
 class MissionPlansScreen extends StatefulWidget {
   const MissionPlansScreen({super.key});
@@ -13,6 +18,56 @@ class MissionPlansScreen extends StatefulWidget {
 
 class _MissionPlansScreenState extends State<MissionPlansScreen> {
   final TextEditingController _planNameController = TextEditingController();
+
+  Future<void> _importMissionPlan() async {
+    final provider = Provider.of<MissionPlanProvider>(context, listen: false);
+
+    try {
+      // 1. Abrir el diálogo para seleccionar un archivo
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+
+      if (result != null) {
+        String? filePath = result.files.single.path;
+        if (filePath != null) {
+          // 2. Leer el contenido del archivo como una cadena
+          File file = File(filePath);
+          String jsonContent = await file.readAsString();
+
+          // 3. Decodificar el JSON a un mapa de Dart
+          Map<String, dynamic> jsonData = jsonDecode(jsonContent);
+
+          // 4. Crear un objeto MissionPlan usando el constructor de fábrica
+          MissionPlan newPlan = MissionPlan.fromJson(jsonData);
+
+          // 5. Añadir el nuevo plan al proveedor
+          provider.importMissionPlan(newPlan);
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Plan "${newPlan.name}" importado con éxito.'),
+              ),
+            );
+          }
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Importación cancelada.')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al importar el archivo: $e')),
+        );
+      }
+    }
+  }
 
   void _showAddEditPlanDialog({String? planId, String? currentName}) {
     _planNameController.text = currentName ?? '';
@@ -104,6 +159,11 @@ class _MissionPlansScreenState extends State<MissionPlansScreen> {
             icon: const Icon(Icons.add),
             tooltip: 'Crear nuevo plan',
             onPressed: () => _showAddEditPlanDialog(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.download_for_offline),
+            tooltip: 'Importar plan de misiones',
+            onPressed: _importMissionPlan,
           ),
         ],
       ),
