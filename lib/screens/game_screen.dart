@@ -375,7 +375,7 @@ class _GameScreenState extends State<GameScreen> {
                                         child: Text(
                                           'Ronda ${round.roundNumber}',
                                           style: const TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
