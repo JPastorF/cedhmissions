@@ -90,16 +90,14 @@ class PlayerScoreCard extends StatelessWidget {
     final rounds = game?.rounds ?? [];
 
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 2.0),
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          16.0,
-          10.0,
-          16.0,
-          1.0,
-        ), // Reducido de 16.0/12.0 a 10.0 en top/bottom
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 8.0,
+        ), // Padding ajustado para un equilibrio visual
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -167,49 +165,42 @@ class PlayerScoreCard extends StatelessWidget {
             const Divider(height: 4, thickness: 1),
             // Desglose de puntos por ronda
             if (rounds.isNotEmpty) ...[
-              //const SizedBox(height: 8),
-              // Usamos un ListView.builder anidado para el desglose de rondas
-              // Asegúrate de que no haya problemas de scroll si la lista es muy larga
-              ListView.builder(
-                shrinkWrap:
-                    true, // Importante para que el ListView anidado no ocupe todo el espacio
-                physics:
-                    const NeverScrollableScrollPhysics(), // Deshabilita el scroll propio
-                itemCount: rounds.length,
-                itemBuilder: (context, roundIndex) {
-                  final round = rounds[roundIndex];
-                  final pointsInRound =
-                      gameProvider.currentGame!.playerPointsPerRound[round
-                          .id]?[player.id] ??
-                      0;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Ronda ${round.roundNumber}:',
-                          style: const TextStyle(fontSize: 16),
+              // Generamos las filas directamente en la Column
+              ...rounds.map((round) {
+                final pointsInRound =
+                    gameProvider.currentGame!.playerPointsPerRound[round
+                        .id]?[player.id] ??
+                    0;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Ronda ${round.roundNumber}:',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        '$pointsInRound',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: pointsInRound >= 0
+                              ? Colors.greenAccent
+                              : Colors.amberAccent,
                         ),
-                        Text(
-                          '$pointsInRound',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: pointsInRound >= 0
-                                ? Colors.greenAccent
-                                : Colors.amberAccent,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ] else ...[
-              const Text(
-                'No hay rondas aún.',
-                style: TextStyle(fontSize: 14), //color: Colors.black54),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  'No hay rondas aún.',
+                  style: TextStyle(fontSize: 14),
+                ),
               ),
             ],
           ],
