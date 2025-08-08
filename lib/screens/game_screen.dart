@@ -269,6 +269,7 @@ class _GameScreenState extends State<GameScreen> {
                       const Text(
                         'Añade jugadores para comenzar una partida.',
                         style: TextStyle(fontSize: 18),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton.icon(
