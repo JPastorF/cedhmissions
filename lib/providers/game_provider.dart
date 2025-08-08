@@ -41,10 +41,11 @@ class GameProvider with ChangeNotifier {
 
   // Reinicia la partida actual
   void resetGame() {
+    newGame();
     //_currentGame = null;
-    _currentGame = Game(id: _uuid.v4());
-    _saveGame();
-    notifyListeners();
+    //_currentGame = Game(id: _uuid.v4());
+    //_saveGame();
+    //notifyListeners();
   }
 
   // --- Gestión de Jugadores ---
@@ -53,11 +54,15 @@ class GameProvider with ChangeNotifier {
     if (_currentGame == null) {
       newGame(); // Si no hay partida, crea una nueva
     }
-    final newPlayer = Player(id: _uuid.v4(), name: name);
-    _currentGame!.addPlayer(newPlayer);
-    _recalculateAllPlayerTotalPoints(); // Recalcular totales al añadir jugador
-    _saveGame();
-    notifyListeners();
+    //lo añado solo si no existe ya
+    if (name.trim().isNotEmpty &&
+        !_currentGame!.players.any((player) => player.name == name)) {
+      final newPlayer = Player(id: _uuid.v4(), name: name);
+      _currentGame!.addPlayer(newPlayer);
+      _recalculateAllPlayerTotalPoints(); // Recalcular totales al añadir jugador
+      _saveGame();
+      notifyListeners();
+    }
   }
 
   void removePlayer(String playerId) {

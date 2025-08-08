@@ -47,7 +47,7 @@ class _GameScreenState extends State<GameScreen> {
                 gameProvider.currentGame?.players.map((p) => p.name).toSet() ??
                 {};
             final selectablePlayers = favoritePlayers
-                .where((name) => !gamePlayerNames.contains(name))
+                .where((p) => !gamePlayerNames.contains(p.name))
                 .toList();
 
             return AlertDialog(
@@ -215,9 +215,9 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Consumer<GameProvider>(
       builder: (context, gameProvider, child) {
-        if (gameProvider.currentGame == null) {
-          gameProvider.newGame();
-        }
+        //if (gameProvider.currentGame == null) {
+        //  gameProvider.newGame();
+        //}
         final game = gameProvider.currentGame;
         final players = game?.players ?? [];
         final rounds = game?.rounds ?? [];

@@ -83,6 +83,7 @@ class _MissionPlansScreenState extends State<MissionPlansScreen> {
             );
           }
           return ListView.builder(
+            padding: const EdgeInsets.only(bottom: 56.0),
             itemCount: provider.missionPlans.length,
             itemBuilder: (context, index) {
               final plan = provider.missionPlans[index];

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/mission_plan.dart';
 import '../models/player.dart';
 import '../models/game.dart';
+import 'package:uuid/uuid.dart';
 
 /// Servicio de persistencia para guardar y cargar el estado completo de la aplicación.
 /// Utiliza SharedPreferences para almacenar los datos en formato JSON.
@@ -11,6 +12,7 @@ class StorageService {
   static const _missionPlansKey = 'missionPlans';
   static const _playersKey = 'players';
   static const _gameStateKey = 'gameState';
+  final Uuid _uuid = Uuid();
 
   /// Guarda la lista de planes de misiones en el almacenamiento local.
   Future<void> saveMissionPlans(List<MissionPlan> plans) async {
@@ -69,7 +71,7 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     final String? jsonString = prefs.getString(_gameStateKey);
     if (jsonString == null) {
-      return null;
+      return Game(id: _uuid.v4());
     }
     return Game.fromJson(json.decode(jsonString));
   }
