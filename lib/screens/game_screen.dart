@@ -155,36 +155,21 @@ class _GameScreenState extends State<GameScreen> {
       return;
     }
 
-    final missionPlanProvider = Provider.of<MissionPlanProvider>(
-      context,
-      listen: false,
-    );
-    /*final plans = missionPlanProvider.missionPlans;
-
-    if (plans.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'No hay planes de misiones disponibles. Crea uno primero.',
-          ),
-        ),
-      );
-      return;
-    }*/
-
     showDialog(
       context: context,
       builder: (context) {
         return Consumer<MissionPlanProvider>(
           builder: (context, missionPlanProvider, child) {
-            final plans = missionPlanProvider.missionPlans;
+            final plans = missionPlanProvider.missionPlans.where(
+              (p) => p.missions.isNotEmpty,
+            );
 
             // Si la lista de planes está vacía, mostramos un mensaje para crear uno.
             if (plans.isEmpty) {
               return AlertDialog(
                 title: const Text('Sin Planes de Misión'),
                 content: const Text(
-                  'No hay planes de misiones disponibles. Por favor, crea uno para poder añadir una ronda.',
+                  'No hay planes de misiones disponibles con al menos una mision. Por favor, crea uno para poder añadir una ronda.',
                 ),
                 actions: [
                   TextButton(
