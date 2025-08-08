@@ -159,7 +159,7 @@ class _GameScreenState extends State<GameScreen> {
       context,
       listen: false,
     );
-    final plans = missionPlanProvider.missionPlans;
+    /*final plans = missionPlanProvider.missionPlans;
 
     if (plans.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -170,42 +170,64 @@ class _GameScreenState extends State<GameScreen> {
         ),
       );
       return;
-    }
+    }*/
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Seleccionar Plan de Misión'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: plans
-                  .map(
-                    (plan) => ListTile(
-                      title: Text(plan.name),
-                      onTap: () {
-                        gameProvider.addRound(plan);
-                        Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Ronda ${gameProvider.currentGame!.rounds.length} añadida con el plan "${plan.name}".',
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
-          ],
+        return Consumer<MissionPlanProvider>(
+          builder: (context, missionPlanProvider, child) {
+            final plans = missionPlanProvider.missionPlans;
+
+            // Si la lista de planes está vacía, mostramos un mensaje para crear uno.
+            if (plans.isEmpty) {
+              return AlertDialog(
+                title: const Text('Sin Planes de Misión'),
+                content: const Text(
+                  'No hay planes de misiones disponibles. Por favor, crea uno para poder añadir una ronda.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cerrar'),
+                  ),
+                ],
+              );
+            }
+
+            return AlertDialog(
+              title: const Text('Seleccionar Plan de Misión'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: plans
+                      .map(
+                        (plan) => ListTile(
+                          title: Text(plan.name),
+                          onTap: () {
+                            gameProvider.addRound(plan);
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Ronda ${gameProvider.currentGame!.rounds.length} añadida con el plan "${plan.name}".',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancelar'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
