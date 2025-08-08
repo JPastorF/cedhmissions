@@ -83,6 +83,29 @@ class GameProvider with ChangeNotifier {
 
   void updatePlayerName(String playerId, String newName) {
     if (_currentGame == null) return;
+
+    // 1. Limpiamos el nuevo nombre de espacios en blanco
+    final trimmedNewName = newName.trim();
+
+    // 2. Comprobamos que el nombre no esté vacío
+    if (trimmedNewName.isEmpty) return;
+
+    // 3. Verificamos si ya existe otro jugador con el mismo nombre (sin distinción de mayúsculas)
+    //    y nos aseguramos de que no sea el mismo jugador que estamos editando.
+    final isDuplicate = _currentGame!.players.any(
+      (p) =>
+          p.id != playerId &&
+          p.name.trim().toLowerCase() == trimmedNewName.toLowerCase(),
+    );
+
+    // 4. Si se encuentra un duplicado, detenemos la operación.
+    if (isDuplicate) {
+      // Aquí puedes añadir lógica para mostrar un mensaje de error al usuario,
+      // como un Snackbar o un Toast.
+      //print('Error: Ya existe un jugador con este nombre.');
+      return;
+    }
+
     final playerIndex = _currentGame!.players.indexWhere(
       (p) => p.id == playerId,
     );

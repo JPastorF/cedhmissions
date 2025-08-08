@@ -59,15 +59,40 @@ class FavoritePlayersProvider with ChangeNotifier {
   /// Actualiza el nombre de un jugador favorito usando su ID único.
   /// Se ha cambiado la firma del método para ser más robusta.
   void updateFavoritePlayerName(String playerId, String newName) {
-    if (newName.trim().isNotEmpty) {
-      final index = _favoritePlayers.indexWhere(
-        (player) => player.id == playerId,
-      );
-      if (index != -1) {
-        _favoritePlayers[index].name = newName;
-        _savePlayers();
-        notifyListeners();
-      }
+    // 1. Limpiamos el nuevo nombre de espacios en blanco al inicio y al final.
+    final trimmedNewName = newName.trim();
+
+    // 2. Verificamos si el nuevo nombre no está vacío.
+    if (trimmedNewName.isEmpty) {
+      // Aquí puedes añadir un mensaje de error si el nombre está vacío.
+      return;
+    }
+
+    // 3. Comprobamos si ya existe un jugador favorito con este nombre,
+    //    excluyendo al jugador que se está editando.
+    final isDuplicate = _favoritePlayers.any(
+      (p) =>
+          p.id != playerId &&
+          p.name.trim().toLowerCase() == trimmedNewName.toLowerCase(),
+    );
+
+    // 4. Si se encuentra un duplicado, detenemos la operación.
+    if (isDuplicate) {
+      // Puedes añadir lógica para mostrar un mensaje de error al usuario,
+      // por ejemplo, usando un Snackbar.
+      //print('Error: Ya existe un jugador favorito con este nombre.');
+      return;
+    }
+
+    // 5. Si no hay duplicados, buscamos el jugador y actualizamos su nombre.
+    final index = _favoritePlayers.indexWhere(
+      (player) => player.id == playerId,
+    );
+
+    if (index != -1) {
+      _favoritePlayers[index].name = trimmedNewName;
+      _savePlayers();
+      notifyListeners();
     }
   }
 }

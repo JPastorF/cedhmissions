@@ -56,6 +56,38 @@ class _MissionPlansScreenState extends State<MissionPlansScreen> {
     );
   }
 
+  // Nuevo método para mostrar el diálogo de confirmación
+  void _showDeleteConfirmationDialog(String planId) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final provider = Provider.of<MissionPlanProvider>(
+          context,
+          listen: false,
+        );
+        return AlertDialog(
+          title: const Text('Confirmar Eliminación'),
+          content: const Text(
+            '¿Estás seguro de que quieres eliminar este plan de misión? Esta acción no se puede deshacer.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                provider.removeMissionPlan(planId);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Eliminar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _planNameController.dispose();
@@ -104,9 +136,13 @@ class _MissionPlansScreenState extends State<MissionPlansScreen> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete),
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.deepOrangeAccent,
+                        ),
                         tooltip: 'Eliminar plan',
-                        onPressed: () => provider.removeMissionPlan(plan.id),
+                        // Se actualiza el onPressed para llamar al nuevo método
+                        onPressed: () => _showDeleteConfirmationDialog(plan.id),
                       ),
                       IconButton(
                         icon: const Icon(Icons.arrow_forward_ios),
