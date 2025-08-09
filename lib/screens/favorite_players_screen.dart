@@ -53,7 +53,7 @@ class FavoritePlayersScreen extends StatelessWidget {
   void _showEditPlayerDialog(
     BuildContext context,
     FavoritePlayersProvider provider,
-    String playerId, // Ahora se usa el ID del jugador para la actualización
+    String playerId,
     String oldName,
   ) {
     final TextEditingController controller = TextEditingController(
@@ -77,7 +77,6 @@ class FavoritePlayersScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 if (controller.text.isNotEmpty) {
-                  // Se llama al método con el ID y el nuevo nombre
                   provider.updateFavoritePlayerName(playerId, controller.text);
                   Navigator.of(context).pop();
                 }
@@ -92,9 +91,20 @@ class FavoritePlayersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Definimos el degradado de fondo, igual que en HomeScreen
+    const LinearGradient backgroundGradient = LinearGradient(
+      colors: [
+        Color(0xFF263238), // blueGrey.shade900
+        Color(0xFF37474F), // blueGrey.shade800
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Jugadores'),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add),
@@ -106,44 +116,84 @@ class FavoritePlayersScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer<FavoritePlayersProvider>(
-        builder: (context, provider, child) {
-          final players = provider.favoritePlayers;
-          return players.isEmpty
-              ? const Center(child: Text('No hay jugadores favoritos aún.'))
-              : ListView.builder(
-                  itemCount: players.length,
-                  itemBuilder: (context, index) {
-                    final player =
-                        players[index]; // Se accede al objeto Player completo
-                    return ListTile(
-                      title: Text(player.name), // Se usa la propiedad 'name'
+      body: Container(
+        decoration: const BoxDecoration(gradient: backgroundGradient),
+        child: Consumer<FavoritePlayersProvider>(
+          builder: (context, provider, child) {
+            final players = provider.favoritePlayers;
+            players.sort((a, b) => a.name.compareTo(b.name));
+
+            if (players.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.people_outline,
+                      size: 80,
+                      color: Colors.white30,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No hay jugadores favoritos. ¡Añade uno!',
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.only(
+                top: 8.0,
+                left: 8.0,
+                right: 8.0,
+                bottom: 56.0,
+              ),
+              itemCount: players.length,
+              itemBuilder: (context, index) {
+                final player = players[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.person, color: Colors.white70),
+                      title: Text(player.name),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.lightBlue,
+                            ),
                             onPressed: () => _showEditPlayerDialog(
                               context,
                               provider,
-                              player.id, // Se pasa el ID
-                              player.name, // Se pasa el nombre actual
+                              player.id,
+                              player.name,
                             ),
                             tooltip: 'Editar',
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => provider.removeFavoritePlayer(
-                              player.id,
-                            ), // Se usa el ID para eliminar
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.deepOrange,
+                            ),
+                            onPressed: () =>
+                                provider.removeFavoritePlayer(player.id),
                             tooltip: 'Eliminar',
                           ),
                         ],
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 );
-        },
+              },
+            );
+          },
+        ),
       ),
     );
   }
